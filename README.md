@@ -2,8 +2,8 @@
 
 ## Units
 
-* chargingTime - Hours
-* remainingCapacity - kWh
-* batteryCapacity - kWh
+* chargingTimeHours - Hours
+* remainingCapacityKWh - kilowatt-hour
+* batteryCapacityKWh - kilowatt-hour
 * SoC - Percentage
-* connectorPower - kW
+* connectorPower - kilowatt
