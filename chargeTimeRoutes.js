@@ -1,30 +1,33 @@
 const express = require('express');
 const router = express.Router();
 
-function isInputMissing(connectorPower, batteryCapacity, soc) {
-  return !connectorPower || !batteryCapacity || soc === undefined;
+function isInputMissing(connectorPowerKW, batteryCapacityKWh, socPercentage) {
+  return (
+    !connectorPowerKW || !batteryCapacityKWh || socPercentage === undefined
+  );
 }
 
-function isSocOutOfRange(soc) {
-  return soc < 0 || soc > 100;
+function isSocOutOfRange(socPercentage) {
+  return socPercentage < 0 || socPercentage > 100;
 }
 
 router.post('/', (req, res) => {
-  const {connectorPower, batteryCapacity, soc} = req.body;
+  const {connectorPowerKW, batteryCapacityKWh, socPercentage} = req.body;
 
-  if (isInputMissing(connectorPower, batteryCapacity, soc)) {
+  if (isInputMissing(connectorPowerKW, batteryCapacityKWh, socPercentage)) {
     return res.status(400).json({error: 'Missing required parameters'});
   }
 
-  if (isSocOutOfRange(soc)) {
+  if (isSocOutOfRange(socPercentage)) {
     return res.status(400).json({error: 'SoC must be between 0 and 100'});
   }
 
-  const remainingCapacity = batteryCapacity * ((100 - soc) / 100);
+  const remainingCapacityKWh =
+    batteryCapacityKWh * ((100 - socPercentage) / 100);
 
-  const chargingTime = remainingCapacity / connectorPower;
+  const chargingTimeHours = remainingCapacityKWh / connectorPowerKW;
 
-  res.json({chargingTime});
+  res.json({chargingTimeHours});
 });
 
 module.exports = router;

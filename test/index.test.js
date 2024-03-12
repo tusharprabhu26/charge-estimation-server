@@ -16,8 +16,8 @@ function checkResponse(
 ) {
   expect(httpResponse.statusCode).to.equal(expectedStatusCode);
   if (expectedChargingTime !== undefined) {
-    expect(httpResponse.body).to.have.property('chargingTime');
-    expect(httpResponse.body.chargingTime).to.equal(expectedChargingTime);
+    expect(httpResponse.body).to.have.property('chargingTimeHours');
+    expect(httpResponse.body.chargingTimeHours).to.equal(expectedChargingTime);
   }
   if (expectedErrorMessage !== undefined) {
     expect(httpResponse.body).to.have.property('error');
@@ -28,9 +28,9 @@ function checkResponse(
 describe('POST /estimate-charging-time', () => {
   it('should calculate the charging time correctly', async () => {
     const chargingTimeResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
-      soc: 50,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
+      socPercentage: 50,
     });
 
     checkResponse(chargingTimeResponse, 200, 2);
@@ -38,8 +38,8 @@ describe('POST /estimate-charging-time', () => {
 
   it('should return 400 if parameters are missing', async () => {
     const missingParamsResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      soc: 50,
+      connectorPowerKW: 10,
+      socPercentage: 50,
     });
 
     checkResponse(
@@ -52,9 +52,9 @@ describe('POST /estimate-charging-time', () => {
 
   it('should return 400 if soc is not between 0 and 100', async () => {
     const invalidSocResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
-      soc: 150,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
+      socPercentage: 150,
     });
 
     checkResponse(
@@ -65,10 +65,10 @@ describe('POST /estimate-charging-time', () => {
     );
   });
 
-  it('should return 400 if connectorPower is missing', async () => {
+  it('should return 400 if connectorPowerKW is missing', async () => {
     const missingPowerResponse = await postEstimateChargingTime({
-      batteryCapacity: 40,
-      soc: 50,
+      batteryCapacityKWh: 40,
+      socPercentage: 50,
     });
 
     checkResponse(
@@ -79,10 +79,10 @@ describe('POST /estimate-charging-time', () => {
     );
   });
 
-  it('should return 400 if batteryCapacity is missing', async () => {
+  it('should return 400 if batteryCapacityKWh is missing', async () => {
     const missingCapacityResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      soc: 50,
+      connectorPowerKW: 10,
+      socPercentage: 50,
     });
 
     checkResponse(
@@ -95,8 +95,8 @@ describe('POST /estimate-charging-time', () => {
 
   it('should return 400 if soc is missing', async () => {
     const missingSocResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
     });
 
     checkResponse(
@@ -109,9 +109,9 @@ describe('POST /estimate-charging-time', () => {
 
   it('should return 400 if soc is less than 0', async () => {
     const negativeSocResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
-      soc: -1,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
+      socPercentage: -1,
     });
 
     checkResponse(
@@ -124,9 +124,9 @@ describe('POST /estimate-charging-time', () => {
 
   it('should return 400 if soc is greater than 100', async () => {
     const overchargedSocResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
-      soc: 101,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
+      socPercentage: 101,
     });
 
     checkResponse(
@@ -139,9 +139,9 @@ describe('POST /estimate-charging-time', () => {
 
   it('should calculate the charging time correctly when soc is 0', async () => {
     const zeroSocResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
-      soc: 0,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
+      socPercentage: 0,
     });
 
     checkResponse(zeroSocResponse, 200, 4);
@@ -149,9 +149,9 @@ describe('POST /estimate-charging-time', () => {
 
   it('should calculate the charging time correctly when soc is 100', async () => {
     const fullSocResponse = await postEstimateChargingTime({
-      connectorPower: 10,
-      batteryCapacity: 40,
-      soc: 100,
+      connectorPowerKW: 10,
+      batteryCapacityKWh: 40,
+      socPercentage: 100,
     });
 
     checkResponse(fullSocResponse, 200, 0);
